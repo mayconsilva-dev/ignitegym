@@ -1,8 +1,12 @@
-import { VStack, Image, Center, Text, Heading, ScrollView, onChange } from "@gluestack-ui/themed";
-import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form"
+import { useNavigation } from "@react-navigation/native";
+import { VStack, Image, Center, Text, Heading, ScrollView, onChange } from "@gluestack-ui/themed";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"
+
+import axios from "axios";
+import { api } from "@services/api"
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
@@ -42,8 +46,16 @@ export function SignUp(){
     navigation.goBack()
   }
 
-  function handleSignUp({ name, email, password, password_confirm }: FormDataProps) {
-    console.log({name, email, password, password_confirm})
+   async function handleSignUp({ name, email, password }: FormDataProps) {
+    try {
+      const response = await api.post('/users', { name, email, password });
+      console.log(response.data);
+    } catch (error) {
+      if( axios.isAxiosError(error)) {
+        Alert.alert(error.response?.data.message);
+      }
+      
+    }
   }
 
     return(
